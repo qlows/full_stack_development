@@ -25,10 +25,10 @@ router.get('/profile', (req,res) => {
   //res.send('This is profile router');
   //res.json({userJson})
 
-  const filePath = path.join(__dirname, "user.json");
-  let data = fs.readFileSync(filePath);
-  data = JSON.parse(data);
-  res.json(data);
+  fs.readFile("./user.json", (err, json) =>{
+    let tmp = JSON.parse(json);
+    res.json(tmp);
+  });
 });
 
 /*
@@ -52,27 +52,25 @@ router.get('/profile', (req,res) => {
 */
 router.get('/login', (req,res) => {
   //res.send('This is login router');
-  const {username, password} = req.query;
+  
+  let username = req.query.username;
+  let passsword = req.query.passsword;
 
-  const pathWay = path.join(__dirname, "user.json");
-  const data = fs.readFileSync(pathWay);
-  const user = JSON.parse(data);
-
-  let response;
-
-  if(user.username == username){
-    if(user.password == password){
-      response = {status: true, message: "User Is Valid"};
-    }
-    else{
-      response = {status: false, message: "Password is invalid"};
-    }
-  }
-  else{
-    response = {status: false, message: "User Name is invalid"};
-  }
-
-  res.json(response);
+  if(username == userJson.username && passsword == userJson.passsword)
+    res.status(200).json({
+      status: true,
+      message: "User Is Valid"
+    });
+  else if(username == userJson.username)
+    res.status(401).json({
+      status: false,
+      message: "Password is invalid"
+    })
+  else
+    res.status(401).json({
+      status: false,
+      message: "Username is invalid"
+    })
 });
 
 /*
@@ -82,8 +80,9 @@ router.get('/login', (req,res) => {
 router.get('/logout', (req,res) => {
   //res.send('This is logout router');
 
-  const username = req.params.username;
-  res.send(`<b>${username} successfully logout.<b>`);
+  let userLogout = req.params.un
+  console.log(userLogout)
+  res.send(`<b>${userLogout} successfilly logout.<b>`)
 });
 
 app.use('/', router);
